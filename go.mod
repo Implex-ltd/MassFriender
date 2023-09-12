@@ -9,7 +9,8 @@ require (
 )
 
 require (
-	github.com/Implex-ltd/cleanhttp v0.0.0-20230910231418-eb5c0bb1bc1a // indirect
+	github.com/Implex-ltd/cleanhttp v0.0.0-20230911013353-e9e5d0aacb6e // indirect
+	github.com/Implex-ltd/ucdiscord v0.0.0-20230911081200-9d22204cec65 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/bogdanfinn/fhttp v0.5.24 // indirect
 	github.com/bogdanfinn/tls-client v1.6.0 // indirect
@@ -17,6 +18,7 @@ require (
 	github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964 // indirect
 	github.com/go-jose/go-jose/v3 v3.0.0 // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
+	github.com/google/uuid v1.3.1 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/klauspost/compress v1.16.7 // indirect
 	github.com/mssola/user_agent v0.6.0 // indirect

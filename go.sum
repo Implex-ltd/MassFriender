@@ -2,8 +2,12 @@ github.com/0xF7A4C6/GoCycle v0.0.0-20230623065856-dd8a5a180c87 h1:V7ysylc0ejPqpi
 github.com/0xF7A4C6/GoCycle v0.0.0-20230623065856-dd8a5a180c87/go.mod h1:FFXl+R9/Wf68Mo523+cULQTQgLCUdTT4MHHyHN2z6bQ=
 github.com/Implex-ltd/cleanhttp v0.0.0-20230910231418-eb5c0bb1bc1a h1:1RqKJYDuyXCJz/tEhomqcXcdLbzzczEa0q/zp0VsYI4=
 github.com/Implex-ltd/cleanhttp v0.0.0-20230910231418-eb5c0bb1bc1a/go.mod h1:ceH2IB5K5JKx0oVigYXn2a+LZKoQQ2QOLvAinVdzp4o=
+github.com/Implex-ltd/cleanhttp v0.0.0-20230911013353-e9e5d0aacb6e h1:CT5whsxSsQLIY9Vt0ZkjhfLMIYMlf5wNj/nKkCvmDCk=
+github.com/Implex-ltd/cleanhttp v0.0.0-20230911013353-e9e5d0aacb6e/go.mod h1:ceH2IB5K5JKx0oVigYXn2a+LZKoQQ2QOLvAinVdzp4o=
 github.com/Implex-ltd/fingerprint-client v0.0.0-20230830235428-380e1bbcfa4b h1:TudRrLEGAwByx88oj6sEJJmumNJoKymzAeQ22xsMBAc=
 github.com/Implex-ltd/fingerprint-client v0.0.0-20230830235428-380e1bbcfa4b/go.mod h1:wqakRN43WgxWu2rZJMJomsWxS0DuGZo3or/gNOn6YvI=
+github.com/Implex-ltd/ucdiscord v0.0.0-20230911081200-9d22204cec65 h1:yhqwA58ikB6o3PGczqVZGk/1xpLhxAfciCdnUNT9n9I=
+github.com/Implex-ltd/ucdiscord v0.0.0-20230911081200-9d22204cec65/go.mod h1:eV4RPohh66QCCgDf2sbh6WQTdmAx1TL9+K5Dp1SplEw=
 github.com/andybalholm/brotli v1.0.5 h1:8uQZIdzKmjc/iuPu7O2ioW48L81FgatrcpfFmiq/cCs=
 github.com/andybalholm/brotli v1.0.5/go.mod h1:fO7iG3H7G2nSZ7m0zPUDn85XEX2GTukHGRSepvi9Eig=
 github.com/bogdanfinn/fhttp v0.5.24 h1:OlyBKjvJp6a3TotN3wuj4mQHHRbfK7QUMrzCPOZGhRc=
@@ -20,6 +24,8 @@ github.com/go-jose/go-jose/v3 v3.0.0/go.mod h1:RNkWWRld676jZEYoV3+XK8L2ZnNSvIsxF
 github.com/go-stack/stack v1.8.1 h1:ntEHSVwIt7PNXNpgPmVfMrNhLtgjlmnZha2kOpuRiDw=
 github.com/go-stack/stack v1.8.1/go.mod h1:dcoOX6HbPZSZptuspn9bctJ+N/CnF5gGygcUP3XYfe4=
 github.com/google/go-cmp v0.5.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+github.com/google/uuid v1.3.1 h1:KjJaJ9iWZ3jOFZIf1Lqf4laDRCasjl0BCmnEGxkdLb4=
+github.com/google/uuid v1.3.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/gorilla/websocket v1.5.0 h1:PPwGk2jz7EePpoHN/+ClbZu8SPxiqlu12wZP/3sWmnc=
 github.com/gorilla/websocket v1.5.0/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/klauspost/compress v1.16.7 h1:2mk3MPGNzKyxErAw8YaohYh69+pa4sIQSC0fPGCFR9I=

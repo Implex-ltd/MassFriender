@@ -15,9 +15,7 @@ var (
 	Inputs = make(map[string]*GoCycle.Cycle)
 )
 
-func LoadDataset() error {
-	inputDir := "../../assets/input/"
-
+func LoadDir(inputDir string) error {
 	files, err := os.ReadDir(inputDir)
 	if err != nil {
 		return err
@@ -54,7 +52,20 @@ func LoadDataset() error {
 
 	wg.Wait()
 
-	// do not iterate trought tokens
+	return nil
+}
+
+func LoadDataset() error {
+	for _, path := range []string{
+		"../../assets/input/",
+		"../../assets/data/",
+	} {
+		if err := LoadDir(path); err != nil {
+			return err
+		}
+	}
+	
+	Inputs["tokens"].ClearDuplicates()
 	Inputs["tokens"].WaitForUnlock = false
 	Inputs["username"].WaitForUnlock = false
 

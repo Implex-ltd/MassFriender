@@ -3,10 +3,13 @@ package main
 import (
 	"fmt"
 	"time"
+
+	"github.com/Implex-ltd/friender/internal/utils"
 )
 
 var (
-	Processed, Unprocessable, Unprocessed int
+	Processed, Unprocessable, Unprocessed, Ratelimit, Captcha int
+	TotalArr                                                  []int
 )
 
 func SetTitle(title string) {
@@ -16,8 +19,12 @@ func SetTitle(title string) {
 func ConsoleWorker() {
 	t := time.NewTicker(time.Millisecond)
 
-	select {
-	case <-t.C:
-		SetTitle(fmt.Sprintf("Unprocessed: %d, Processed: %d, Unprocessable: %d", Unprocessed, Processed, Unprocessable))
-	}
+	go func() {
+		for {
+			select {
+			case <-t.C:
+				SetTitle(fmt.Sprintf("Unprocessed: %d, Processed: %d, Unprocessable: %d, Ratelimit: %d, Captcha: %d, Avg: %.2f", Unprocessed, Processed, Unprocessable, Ratelimit, Captcha, utils.CalculateAverage(TotalArr)))
+			}
+		}
+	}()
 }

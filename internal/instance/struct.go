@@ -1,18 +1,21 @@
 package instance
 
+import u "github.com/Implex-ltd/ucdiscord/ucdiscord"
+
 var (
 	STATUS_PROCESSED     = 0
 	STATUS_UNPROCESSABLE = 1
+	STATUS_NIL           = 2
 )
 
 type Config struct {
 	MaxTask int
-	Token   string
+	Client  *u.Client
 }
 
 type Report struct {
-	Success, Error int
-	Captcha        bool
+	Success, Error       int
+	Captcha, Ratelimited bool
 }
 
 type Taskout struct {

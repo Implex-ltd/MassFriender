@@ -1,27 +1,37 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
 
+	"github.com/Implex-ltd/cleanhttp/cleanhttp"
 	"github.com/Implex-ltd/fingerprint-client/fpclient"
 	"github.com/Implex-ltd/friender/internal/instance"
+	"github.com/Implex-ltd/friender/internal/utils"
+	u "github.com/Implex-ltd/ucdiscord/ucdiscord"
 	"github.com/zenthangplus/goccm"
 )
 
 var (
-	fp       *fpclient.Fingerprint
-	PoolSize = 10
+	fp         *fpclient.Fingerprint
+	PoolSize   = 300
+	DmPerToken = 13
 )
 
 func GatherTasklist(length int) []string {
 	out := make([]string, 0)
-	
+
 	for i := 0; i < length; i++ {
 		username, err := Inputs["username"].Next()
 		if err != nil {
 			break
+		}
+
+		if Inputs["done"].IsInList(username) || Inputs["blacklist"].IsInList(username) {
+			i--
+			continue
 		}
 
 		Inputs["username"].Lock(username)
@@ -32,12 +42,46 @@ func GatherTasklist(length int) []string {
 }
 
 func ThreadWorker(token string) error {
-	I, err := instance.NewInstance(&instance.Config{
-		Token:   token,
-		MaxTask: 5,
+	proxy, err := Inputs["proxies"].Next()
+	if err != nil {
+		return err
+	}
+
+	http, err := cleanhttp.NewCleanHttpClient(&cleanhttp.Config{
+		BrowserFp: fp,
+		Proxy:     "http://" + proxy,
 	})
 	if err != nil {
 		return err
+	}
+
+	client, err := u.NewClient(&u.ClientConfig{
+		Token:       token,
+		GetCookies:  true,
+		BuildNumber: 226220,
+		Client:      http,
+	})
+	if err != nil {
+		return err
+	}
+
+	locked, err := client.IsLocked()
+	if err != nil {
+		return err
+	}
+
+	if locked {
+		go utils.AppendLineInDirectory("../../assets/data", "dead.txt", token)
+		return fmt.Errorf("token is locked")
+	}
+
+	I, err := instance.NewInstance(&instance.Config{
+		Client:  client,
+		MaxTask: DmPerToken,
+	})
+	if err != nil {
+		go utils.AppendLineInDirectory("../../assets/data", "dead.txt", token)
+		return fmt.Errorf("token is dead (%s)", err.Error())
 	}
 
 	i := 0
@@ -58,18 +102,32 @@ func ThreadWorker(token string) error {
 			log.Println(err)
 		}
 
-		log.Printf("[%s] job #%d done: %v, output: %v", token[:25], i, I.Cache.Report, output)
+		log.Printf("[%d] [%d] [%s] job #%d done", Processed, I.Cache.Report.Success, token[:25], i)
 
 		for _, task := range output.Unprocessed {
 			Inputs["username"].Unlock(task)
 		}
 
+		/*if !I.Cache.Report.Captcha && !I.Cache.Report.Ratelimited {
+			for _, task := range output.Unprocessable {
+				Inputs["username"].Remove(task)
+				go utils.AppendLineInDirectory("../../assets/data", "blacklist.txt", task)
+			}
+		} else {
+			for _, task := range output.Unprocessable {
+				Inputs["username"].Unlock(task)
+				go utils.AppendLineInDirectory("../../assets/data", "dead.txt", token)
+			}
+		}*/
+		
 		for _, task := range output.Unprocessable {
 			Inputs["username"].Remove(task)
+			go utils.AppendLineInDirectory("../../assets/data", "blacklist.txt", task)
 		}
 
 		for _, task := range output.Processed {
 			Inputs["username"].Remove(task)
+			go utils.AppendLineInDirectory("../../assets/data", "done.txt", task)
 		}
 
 		Processed += len(output.Processed)
@@ -79,7 +137,27 @@ func ThreadWorker(token string) error {
 		I.Cache.Taskout = instance.Taskout{}
 	}
 
-	log.Printf("[%s] job done: %v", token[:25], I.Cache.Report)
+	if !I.Cache.Report.Captcha && !I.Cache.Report.Ratelimited {
+		go utils.AppendLineInDirectory("../../assets/data", "dead.txt", token)
+	}
+
+	if I.Cache.Report.Success != 0 {
+		TotalArr = append(TotalArr, I.Cache.Report.Success)
+	}
+
+	if I.Cache.Report.Captcha {
+		log.Printf("[%d] [%d] [%s] captcha", Processed, I.Cache.Report.Success, token[:25])
+		Captcha++
+		return nil
+	}
+
+	if I.Cache.Report.Ratelimited {
+		log.Printf("[%d] [%d] [%s] ratelimit", Processed, I.Cache.Report.Success, token[:25])
+		Ratelimit++
+		return nil
+	}
+
+	log.Printf("[%d] [%d] [%s] job done", Processed, I.Cache.Report.Success, token[:25])
 	return nil
 }
 
@@ -90,7 +168,7 @@ func main() {
 
 	var err error
 	if fp, err = fpclient.LoadFingerprint(&fpclient.LoadingConfig{
-		FilePath: "../../assets/chrome.json",
+		FilePath: "../../assets/data/chrome.json",
 	}); err != nil {
 		panic(err)
 	}
@@ -116,6 +194,11 @@ func main() {
 
 		Inputs["tokens"].Lock(token)
 
+		if Inputs["dead"].IsInList(token) {
+			c.Done()
+			continue
+		}
+
 		go func(token string) {
 			defer c.Done()
 
@@ -127,6 +210,6 @@ func main() {
 	}
 
 	c.WaitAllDone()
-	log.Printf("All threads exited (Unprocessed: %d, Processed: %d, Unprocessable: %d)", Unprocessed, Processed, Unprocessable)
+	log.Printf("Unprocessed: %d, Processed: %d, Unprocessable: %d, Ratelimit: %d, Captcha: %d, Avg: %.2f", Unprocessed, Processed, Unprocessable, Ratelimit, Captcha, utils.CalculateAverage(TotalArr))
 	os.Exit(0)
 }
