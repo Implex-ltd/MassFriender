@@ -17,7 +17,7 @@ import (
 var (
 	fp         *fpclient.Fingerprint
 	PoolSize   = 300
-	DmPerToken = 13
+	DmPerToken = 5
 )
 
 func GatherTasklist(length int) []string {
@@ -108,7 +108,7 @@ func ThreadWorker(token string) error {
 			Inputs["username"].Unlock(task)
 		}
 
-		/*if !I.Cache.Report.Captcha && !I.Cache.Report.Ratelimited {
+		if !I.Cache.Report.Captcha && !I.Cache.Report.Ratelimited {
 			for _, task := range output.Unprocessable {
 				Inputs["username"].Remove(task)
 				go utils.AppendLineInDirectory("../../assets/data", "blacklist.txt", task)
@@ -118,12 +118,12 @@ func ThreadWorker(token string) error {
 				Inputs["username"].Unlock(task)
 				go utils.AppendLineInDirectory("../../assets/data", "dead.txt", token)
 			}
-		}*/
+		}
 		
-		for _, task := range output.Unprocessable {
+		/*for _, task := range output.Unprocessable {
 			Inputs["username"].Remove(task)
 			go utils.AppendLineInDirectory("../../assets/data", "blacklist.txt", task)
-		}
+		}*/
 
 		for _, task := range output.Processed {
 			Inputs["username"].Remove(task)
