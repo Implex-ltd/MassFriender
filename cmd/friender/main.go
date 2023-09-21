@@ -16,7 +16,7 @@ import (
 
 var (
 	fp         *fpclient.Fingerprint
-	PoolSize   = 300
+	PoolSize   = 500
 	DmPerToken = 8
 )
 
@@ -55,17 +55,33 @@ func ThreadWorker(token string) error {
 		return err
 	}
 
-	client, err := u.NewClient(&u.ClientConfig{
-		Token:       token,
-		GetCookies:  true,
-		BuildNumber: 226220,
-		Client:      http,
+	wss, err := u.NewWebsocket(token, &u.XProp{
+		BrowserVersion:    http.BaseHeader.UaInfo.BrowserVersion,
+		Browser:           http.BaseHeader.UaInfo.BrowserName,
+		OsVersion:         http.BaseHeader.UaInfo.OSVersion,
+		Os:                http.BaseHeader.UaInfo.OSName,
+		BrowserUserAgent:  fp.Navigator.UserAgent,
+		ReleaseChannel:    "stable",
+		SystemLocale:      "fr-FR",
+		ClientBuildNumber: 226220,
+		Device:            "",
 	})
 	if err != nil {
 		return err
 	}
 
-	locked, err := client.IsLocked()
+	client, err := u.NewClient(&u.Config{
+		Token:      token,
+		GetCookies: true,
+		Build:      226220,
+		Http:       http,
+		Ws:         wss,
+	})
+	if err != nil {
+		return err
+	}
+
+	locked, _, err := client.IsLocked()
 	if err != nil {
 		return err
 	}
@@ -102,8 +118,6 @@ func ThreadWorker(token string) error {
 			log.Println(err)
 		}
 
-		log.Printf("[%d] [%d] [%s] job #%d done", Processed, I.Cache.Report.Success, token[:25], i)
-
 		// process task that raise error
 		for _, task := range output.Unprocessed {
 			Inputs["username"].Unlock(task)
@@ -128,9 +142,11 @@ func ThreadWorker(token string) error {
 		I.Cache.Taskout = instance.Taskout{}
 	}
 
-	if !I.Cache.Report.Captcha && !I.Cache.Report.Ratelimited {
+	/*if !I.Cache.Report.Captcha && !I.Cache.Report.Ratelimited {
 		go utils.AppendLineInDirectory("../../assets/data", "dead.txt", token)
-	}
+	}*/
+
+	defer client.Ws.Close()
 
 	if I.Cache.Report.Success != 0 {
 		TotalArr = append(TotalArr, I.Cache.Report.Success)

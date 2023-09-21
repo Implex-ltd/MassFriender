@@ -2,14 +2,11 @@ package instance
 
 import (
 	"log"
-	"strings"
 	"sync"
-
-	u "github.com/Implex-ltd/ucdiscord/ucdiscord"
 )
 
 func NewInstance(config *Config) (*Instance, error) {
-	if _, err := config.Client.WsConnect(); err != nil {
+	if err := config.Client.Ws.Login(); err != nil {
 		return nil, err
 	}
 
@@ -34,32 +31,28 @@ func (I *Instance) PushTask(usernames []string) {
 }
 
 func (I *Instance) Do(task string) int {
-	success, captcha, err := I.Config.Client.SendFriend(&u.FriendConfig{
-		Username: task,
-	})
+	resp, data, err := I.Config.Client.AddFriend(task)
 
 	if err != nil {
-		if strings.Contains(err.Error(), "429") {
-			I.Cache.Report.Ratelimited = true
-			return STATUS_RATELIMIT
-		}
-
-		if strings.Contains(err.Error(), "user not found") {
-			I.Cache.Report.InvalidUser = true
-			return STATUS_UNPROCESSABLE
-		}
-
 		return STATUS_NIL
 	}
 
-	if captcha != nil {
-		I.Cache.Report.Captcha = true
-		return STATUS_NIL
-	}
+	log.Printf("[#%d] %s -> `%s` %v", I.Cache.Report.Success, I.Config.Client.Config.Token, task, resp.Status)
 
-	log.Printf("[#%d] %s -> `%s` %v", I.Cache.Report.Success, I.Config.Client.Config.Token, task, success)
-	if success {
+	switch resp.Status {
+	case 429:
+		I.Cache.Report.Ratelimited = true
+		return STATUS_RATELIMIT
+	case 400:
+		I.Cache.Report.InvalidUser = true
+		return STATUS_UNPROCESSABLE
+	case 204:
 		return STATUS_PROCESSED
+	default:
+		if data.CaptchaRqdata != "" {
+			I.Cache.Report.Captcha = true
+			return STATUS_NIL
+		}
 	}
 
 	return STATUS_NIL
