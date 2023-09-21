@@ -3,9 +3,17 @@ package instance
 import u "github.com/Implex-ltd/ucdiscord/ucdiscord"
 
 var (
+	// Friend request sent
 	STATUS_PROCESSED     = 0
+
+	// Can't find username (username may be invalid)
 	STATUS_UNPROCESSABLE = 1
+
+	// Token got a captcha / unknown error
 	STATUS_NIL           = 2
+
+	// Token is ratelimited (http 429)
+	STATUS_RATELIMIT     = 3
 )
 
 type Config struct {
@@ -14,8 +22,8 @@ type Config struct {
 }
 
 type Report struct {
-	Success, Error       int
-	Captcha, Ratelimited bool
+	Success, Error                    int
+	Captcha, Ratelimited, InvalidUser bool
 }
 
 type Taskout struct {

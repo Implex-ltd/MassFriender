@@ -17,7 +17,7 @@ import (
 var (
 	fp         *fpclient.Fingerprint
 	PoolSize   = 300
-	DmPerToken = 5
+	DmPerToken = 8
 )
 
 func GatherTasklist(length int) []string {
@@ -104,30 +104,21 @@ func ThreadWorker(token string) error {
 
 		log.Printf("[%d] [%d] [%s] job #%d done", Processed, I.Cache.Report.Success, token[:25], i)
 
+		// process task that raise error
 		for _, task := range output.Unprocessed {
 			Inputs["username"].Unlock(task)
 		}
 
-		if !I.Cache.Report.Captcha && !I.Cache.Report.Ratelimited {
-			for _, task := range output.Unprocessable {
-				Inputs["username"].Remove(task)
-				go utils.AppendLineInDirectory("../../assets/data", "blacklist.txt", task)
-			}
-		} else {
-			for _, task := range output.Unprocessable {
-				Inputs["username"].Unlock(task)
-				go utils.AppendLineInDirectory("../../assets/data", "dead.txt", token)
-			}
-		}
-		
-		/*for _, task := range output.Unprocessable {
-			Inputs["username"].Remove(task)
-			go utils.AppendLineInDirectory("../../assets/data", "blacklist.txt", task)
-		}*/
-
+		// process done usernames
 		for _, task := range output.Processed {
 			Inputs["username"].Remove(task)
 			go utils.AppendLineInDirectory("../../assets/data", "done.txt", task)
+		}
+
+		// process invalid usernames
+		for _, task := range output.Unprocessable {
+			Inputs["username"].Remove(task)
+			go utils.AppendLineInDirectory("../../assets/data", "blacklist.txt", task)
 		}
 
 		Processed += len(output.Processed)

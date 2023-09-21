@@ -41,11 +41,11 @@ func (I *Instance) Do(task string) int {
 	if err != nil {
 		if strings.Contains(err.Error(), "429") {
 			I.Cache.Report.Ratelimited = true
-			return STATUS_NIL
+			return STATUS_RATELIMIT
 		}
 
 		if strings.Contains(err.Error(), "user not found") {
-			I.Cache.Report.Ratelimited = true
+			I.Cache.Report.InvalidUser = true
 			return STATUS_UNPROCESSABLE
 		}
 
@@ -80,6 +80,8 @@ func (I *Instance) DoTask() (*Taskout, error) {
 				I.Cache.Taskout.Processed = append(I.Cache.Taskout.Processed, task)
 			case STATUS_UNPROCESSABLE:
 				I.Cache.Taskout.Unprocessable = append(I.Cache.Taskout.Unprocessable, task)
+			case STATUS_RATELIMIT:
+				I.Cache.Taskout.Unprocessed = append(I.Cache.Taskout.Unprocessed, task)
 			default:
 				I.Cache.Report.Error++
 			}
@@ -95,15 +97,4 @@ func (I *Instance) DoTask() (*Taskout, error) {
 	}
 
 	return &I.Cache.Taskout, nil
-}
-
-// utils
-
-func containsTask(slice []string, task string) bool {
-	for _, t := range slice {
-		if t == task {
-			return true
-		}
-	}
-	return false
 }
