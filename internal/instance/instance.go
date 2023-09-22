@@ -37,8 +37,6 @@ func (I *Instance) Do(task string) int {
 		return STATUS_NIL
 	}
 
-	log.Printf("[#%d] %s -> `%s` %v", I.Cache.Report.Success, I.Config.Client.Config.Token, task, resp.Status)
-
 	switch resp.Status {
 	case 429:
 		I.Cache.Report.Ratelimited = true
@@ -47,12 +45,13 @@ func (I *Instance) Do(task string) int {
 		I.Cache.Report.InvalidUser = true
 		return STATUS_UNPROCESSABLE
 	case 204:
+		log.Printf("[#%d] %s -> `%s` %v", I.Cache.Report.Success, I.Config.Client.Config.Token, task, resp.Status)
 		return STATUS_PROCESSED
+	case 403:
+		I.Cache.Report.Captcha = true
+		return STATUS_NIL
 	default:
-		if data.CaptchaRqdata != "" {
-			I.Cache.Report.Captcha = true
-			return STATUS_NIL
-		}
+		log.Println(resp.Status, data)
 	}
 
 	return STATUS_NIL

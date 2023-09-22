@@ -16,8 +16,8 @@ import (
 
 var (
 	fp         *fpclient.Fingerprint
-	PoolSize   = 500
-	DmPerToken = 8
+	PoolSize   = 350
+	DmPerToken = 15
 )
 
 func GatherTasklist(length int) []string {
@@ -154,12 +154,14 @@ func ThreadWorker(token string) error {
 
 	if I.Cache.Report.Captcha {
 		log.Printf("[%d] [%d] [%s] captcha", Processed, I.Cache.Report.Success, token[:25])
+		go utils.AppendLineInDirectory("../../assets/data", "captcha.txt", token)
 		Captcha++
 		return nil
 	}
 
 	if I.Cache.Report.Ratelimited {
 		log.Printf("[%d] [%d] [%s] ratelimit", Processed, I.Cache.Report.Success, token[:25])
+		go utils.AppendLineInDirectory("../../assets/data", "ratelimit.txt", token)
 		Ratelimit++
 		return nil
 	}
@@ -201,7 +203,7 @@ func main() {
 
 		Inputs["tokens"].Lock(token)
 
-		if Inputs["dead"].IsInList(token) {
+		if Inputs["dead"].IsInList(token) || Inputs["captcha"].IsInList(token) || Inputs["ratelimit"].IsInList(token) {
 			c.Done()
 			continue
 		}
