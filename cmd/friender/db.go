@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/0xF7A4C6/GoCycle"
+	"github.com/Implex-ltd/friender/internal/console"
 )
 
 var (
@@ -69,7 +70,7 @@ func LoadDataset() error {
 	Inputs["tokens"].WaitForUnlock = false
 	Inputs["username"].WaitForUnlock = false
 
-	Unprocessed += len(Inputs["username"].List)
+	console.Unprocessed += len(Inputs["username"].List)
 
 	return nil
 }

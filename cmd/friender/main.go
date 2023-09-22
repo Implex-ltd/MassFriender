@@ -8,6 +8,7 @@ import (
 
 	"github.com/Implex-ltd/cleanhttp/cleanhttp"
 	"github.com/Implex-ltd/fingerprint-client/fpclient"
+	"github.com/Implex-ltd/friender/internal/console"
 	"github.com/Implex-ltd/friender/internal/instance"
 	"github.com/Implex-ltd/friender/internal/utils"
 	u "github.com/Implex-ltd/ucdiscord/ucdiscord"
@@ -126,6 +127,7 @@ func ThreadWorker(token string) error {
 		// process done usernames
 		for _, task := range output.Processed {
 			Inputs["username"].Remove(task)
+			go console.Log(fmt.Sprintf(`[<fg=58cee8>%d</>] [<fg=9572e8>%d</>] [<fg=7bcf32>%s</>] sent to: %s`, console.Processed, I.Cache.Report.Success, token[:25], task))
 			go utils.AppendLineInDirectory("../../assets/data", "done.txt", task)
 		}
 
@@ -135,9 +137,9 @@ func ThreadWorker(token string) error {
 			go utils.AppendLineInDirectory("../../assets/data", "blacklist.txt", task)
 		}
 
-		Processed += len(output.Processed)
-		Unprocessable += len(output.Unprocessable)
-		Unprocessed = len(Inputs["username"].List)
+		console.Processed += len(output.Processed)
+		console.Unprocessable += len(output.Unprocessable)
+		console.Unprocessed = len(Inputs["username"].List)
 
 		I.Cache.Taskout = instance.Taskout{}
 	}
@@ -149,24 +151,24 @@ func ThreadWorker(token string) error {
 	defer client.Ws.Close()
 
 	if I.Cache.Report.Success != 0 {
-		TotalArr = append(TotalArr, I.Cache.Report.Success)
+		console.TotalArr = append(console.TotalArr, I.Cache.Report.Success)
 	}
 
 	if I.Cache.Report.Captcha {
-		log.Printf("[%d] [%d] [%s] captcha", Processed, I.Cache.Report.Success, token[:25])
+		console.Log(fmt.Sprintf("[<fg=58cee8>%d</>] [<fg=9572e8>%d</>] [<fg=f23a46>%s</>] captcha", console.Processed, I.Cache.Report.Success, token[:25]))
 		go utils.AppendLineInDirectory("../../assets/data", "captcha.txt", token)
-		Captcha++
+		console.Captcha++
 		return nil
 	}
 
 	if I.Cache.Report.Ratelimited {
-		log.Printf("[%d] [%d] [%s] ratelimit", Processed, I.Cache.Report.Success, token[:25])
+		console.Log(fmt.Sprintf("[<fg=58cee8>%d</>] [<fg=9572e8>%d</>] [<fg=f2a649>%s</>] ratelimit", console.Processed, I.Cache.Report.Success, token[:25]))
 		go utils.AppendLineInDirectory("../../assets/data", "ratelimit.txt", token)
-		Ratelimit++
+		console.Ratelimit++
 		return nil
 	}
 
-	log.Printf("[%d] [%d] [%s] job done", Processed, I.Cache.Report.Success, token[:25])
+	console.Log(fmt.Sprintf("[<fg=58cee8>%d</>] [<fg=9572e8>%d</>] [<fg=9bebd1>%s</>] job done", console.Processed, I.Cache.Report.Success, token[:25]))
 	return nil
 }
 
@@ -182,7 +184,7 @@ func main() {
 		panic(err)
 	}
 
-	go ConsoleWorker()
+	go console.ConsoleWorker()
 
 	c := goccm.New(PoolSize)
 	tokenlength := len(Inputs["tokens"].List)
@@ -212,13 +214,13 @@ func main() {
 			defer c.Done()
 
 			if err := ThreadWorker(token); err != nil {
-				log.Printf("[%s] %s", token[:25], err.Error())
+				console.Log(fmt.Sprintf("[%s] %s", token[:25], err.Error()))
 			}
 			time.Sleep(time.Millisecond * 20)
 		}(token)
 	}
 
 	c.WaitAllDone()
-	log.Printf("Unprocessed: %d, Processed: %d, Unprocessable: %d, Ratelimit: %d, Captcha: %d, Avg: %.2f", Unprocessed, Processed, Unprocessable, Ratelimit, Captcha, utils.CalculateAverage(TotalArr))
+	console.Log(fmt.Sprintf("Unprocessed: %d, Processed: %d, Unprocessable: %d, Ratelimit: %d, Captcha: %d, Avg: %.2f", console.Unprocessed, console.Processed, console.Unprocessable, console.Ratelimit, console.Captcha, utils.CalculateAverage(console.TotalArr)))
 	os.Exit(0)
 }

@@ -1,7 +1,8 @@
-package main
+package console
 
 import (
 	"fmt"
+	"github.com/gookit/color"
 	"time"
 
 	"github.com/Implex-ltd/friender/internal/utils"
@@ -27,4 +28,8 @@ func ConsoleWorker() {
 			}
 		}
 	}()
+}
+
+func Log(content string) {
+	color.Println(fmt.Sprintf("[%s] %s", time.Now().Format("15:04:05"), content))
 }

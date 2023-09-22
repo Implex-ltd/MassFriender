@@ -45,7 +45,6 @@ func (I *Instance) Do(task string) int {
 		I.Cache.Report.InvalidUser = true
 		return STATUS_UNPROCESSABLE
 	case 204:
-		log.Printf("[#%d] %s -> `%s` %v", I.Cache.Report.Success, I.Config.Client.Config.Token, task, resp.Status)
 		return STATUS_PROCESSED
 	case 403:
 		I.Cache.Report.Captcha = true
