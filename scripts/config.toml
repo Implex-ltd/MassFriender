@@ -1,0 +1,11 @@
+[config]
+clear_dups = false
+threads = 300
+max_dm = 15
+
+[discord]
+build = 230656
+
+[bridge]
+enable = true
+port = 1337

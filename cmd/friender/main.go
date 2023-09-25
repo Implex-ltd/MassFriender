@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/Implex-ltd/bridge/bridge"
 	"github.com/Implex-ltd/cleanhttp/cleanhttp"
 	"github.com/Implex-ltd/fingerprint-client/fpclient"
 	"github.com/Implex-ltd/friender/internal/console"
@@ -16,9 +17,7 @@ import (
 )
 
 var (
-	fp         *fpclient.Fingerprint
-	PoolSize   = 350
-	DmPerToken = 15
+	fp *fpclient.Fingerprint
 )
 
 func GatherTasklist(length int) []string {
@@ -64,7 +63,7 @@ func ThreadWorker(token string) error {
 		BrowserUserAgent:  fp.Navigator.UserAgent,
 		ReleaseChannel:    "stable",
 		SystemLocale:      "fr-FR",
-		ClientBuildNumber: 226220,
+		ClientBuildNumber: Config.Discord.Build,
 		Device:            "",
 	})
 	if err != nil {
@@ -74,7 +73,7 @@ func ThreadWorker(token string) error {
 	client, err := u.NewClient(&u.Config{
 		Token:      token,
 		GetCookies: true,
-		Build:      226220,
+		Build:      Config.Discord.Build,
 		Http:       http,
 		Ws:         wss,
 	})
@@ -94,7 +93,7 @@ func ThreadWorker(token string) error {
 
 	I, err := instance.NewInstance(&instance.Config{
 		Client:  client,
-		MaxTask: DmPerToken,
+		MaxTask: Config.Config.MaxDm,
 	})
 	if err != nil {
 		go utils.AppendLineInDirectory("../../assets/data", "dead.txt", token)
@@ -172,6 +171,34 @@ func ThreadWorker(token string) error {
 	return nil
 }
 
+func server() {
+	c := goccm.New(Config.Config.Threads)
+
+	S, err := bridge.NewServer("", Config.Bridge.Port, func(msg string) {
+		log.Printf("recv: %s", msg)
+
+		c.Wait()
+		go func(token string) {
+			defer c.Done()
+
+			if err := ThreadWorker(token); err != nil {
+				console.Log(fmt.Sprintf("[%s] %s", token[:25], err.Error()))
+			}
+		}(msg)
+	})
+
+	if err != nil {
+		panic(err)
+	}
+
+	log.Println("openning..")
+	if err := S.Serve(); err != nil {
+		panic(err)
+	}
+
+	log.Println("Server open")
+}
+
 func main() {
 	if err := LoadDataset(); err != nil {
 		panic(err)
@@ -186,8 +213,12 @@ func main() {
 
 	go console.ConsoleWorker()
 
-	c := goccm.New(PoolSize)
+	c := goccm.New(Config.Config.Threads)
 	tokenlength := len(Inputs["tokens"].List)
+
+	if Config.Bridge.Enable {
+		go server()
+	}
 
 	for i := 0; i < tokenlength; i++ {
 		c.Wait()
@@ -218,6 +249,10 @@ func main() {
 			}
 			time.Sleep(time.Millisecond * 20)
 		}(token)
+	}
+
+	if Config.Bridge.Enable {
+		select {}
 	}
 
 	c.WaitAllDone()

@@ -6,10 +6,10 @@ import (
 	"strings"
 	"sync"
 
-	"path/filepath"
-
 	"github.com/0xF7A4C6/GoCycle"
+	"github.com/BurntSushi/toml"
 	"github.com/Implex-ltd/friender/internal/console"
+	"path/filepath"
 )
 
 var (
@@ -38,7 +38,10 @@ func LoadDir(inputDir string) error {
 					panic(err)
 				}
 
-				//c.ClearDuplicates()
+				if Config.Config.ClearDups {
+					c.ClearDuplicates()
+				}
+				
 				c.RandomiseIndex()
 
 				assetName := strings.Split(file.Name(), ".txt")[0]
@@ -57,6 +60,10 @@ func LoadDir(inputDir string) error {
 }
 
 func LoadDataset() error {
+	if _, err := toml.DecodeFile("../../scripts/config.toml", &Config); err != nil {
+		panic(err)
+	}
+
 	for _, path := range []string{
 		"../../assets/input/",
 		"../../assets/data/",
@@ -65,7 +72,7 @@ func LoadDataset() error {
 			return err
 		}
 	}
-	
+
 	Inputs["tokens"].ClearDuplicates()
 	Inputs["tokens"].WaitForUnlock = false
 	Inputs["username"].WaitForUnlock = false

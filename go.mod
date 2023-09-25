@@ -1,6 +1,6 @@
 module github.com/Implex-ltd/friender
 
-go 1.21
+go 1.21.0
 
 require (
 	github.com/0xF7A4C6/GoCycle v0.0.0-20230623065856-dd8a5a180c87
@@ -11,6 +11,8 @@ require (
 )
 
 require (
+	github.com/BurntSushi/toml v1.3.2 // indirect
+	github.com/Implex-ltd/bridge v0.0.0-20230924140337-8b74c7155852 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/bogdanfinn/fhttp v0.5.24 // indirect
 	github.com/bogdanfinn/tls-client v1.6.1 // indirect
