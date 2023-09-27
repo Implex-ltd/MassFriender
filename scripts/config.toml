@@ -7,5 +7,5 @@ max_dm = 15
 build = 230656
 
 [bridge]
-enable = true
+enable = false
 port = 1337

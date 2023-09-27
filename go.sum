@@ -4,6 +4,8 @@ github.com/BurntSushi/toml v1.3.2 h1:o7IhLm0Msx3BaB+n3Ag7L8EVlByGnpq14C4YWiu/gL8
 github.com/BurntSushi/toml v1.3.2/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
 github.com/Implex-ltd/bridge v0.0.0-20230924140337-8b74c7155852 h1:rKuVTQft4uyfF2QZlSTGO0MmelrRIFlL6kUFiCEuiuc=
 github.com/Implex-ltd/bridge v0.0.0-20230924140337-8b74c7155852/go.mod h1:4MldY+0Fz1X3BTXGrY02pbh7Xz+lYnwK9EsibOWgq4k=
+github.com/Implex-ltd/bridge v0.0.0-20230925122013-03842a3055b7 h1:fm9v7MzkXkXl1DRhb/x+nUIO7APDkSfvQx5nUIgiI7s=
+github.com/Implex-ltd/bridge v0.0.0-20230925122013-03842a3055b7/go.mod h1:4MldY+0Fz1X3BTXGrY02pbh7Xz+lYnwK9EsibOWgq4k=
 github.com/Implex-ltd/cleanhttp v0.0.0-20230911013353-e9e5d0aacb6e h1:CT5whsxSsQLIY9Vt0ZkjhfLMIYMlf5wNj/nKkCvmDCk=
 github.com/Implex-ltd/cleanhttp v0.0.0-20230911013353-e9e5d0aacb6e/go.mod h1:ceH2IB5K5JKx0oVigYXn2a+LZKoQQ2QOLvAinVdzp4o=
 github.com/Implex-ltd/cleanhttp v0.0.0-20230921225715-5741f21b9557 h1:A8jnHckWHbO5I1lZd4KU5JgkBZSyi5y1kdHaHF8PZ+A=

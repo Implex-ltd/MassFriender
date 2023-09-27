@@ -12,7 +12,7 @@ require (
 
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
-	github.com/Implex-ltd/bridge v0.0.0-20230924140337-8b74c7155852 // indirect
+	github.com/Implex-ltd/bridge v0.0.0-20230925122013-03842a3055b7 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/bogdanfinn/fhttp v0.5.24 // indirect
 	github.com/bogdanfinn/tls-client v1.6.1 // indirect
