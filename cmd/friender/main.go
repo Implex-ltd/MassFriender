@@ -92,8 +92,9 @@ func ThreadWorker(token string) error {
 	}
 
 	I, err := instance.NewInstance(&instance.Config{
-		Client:  client,
-		MaxTask: Config.Config.MaxDm,
+		Client:       client,
+		MaxTask:      Config.Config.MaxDm,
+		EnableSolver: Config.Discord.SolveCaptcha,
 	})
 	if err != nil {
 		go utils.AppendLineInDirectory("../../assets/data", "dead.txt", token)

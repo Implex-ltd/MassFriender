@@ -4,15 +4,17 @@ go 1.21.0
 
 require (
 	github.com/0xF7A4C6/GoCycle v0.0.0-20230623065856-dd8a5a180c87
-	github.com/Implex-ltd/cleanhttp v0.0.0-20230921225715-5741f21b9557
+	github.com/Implex-ltd/cleanhttp v0.0.0-20230928154826-e43956ac2a1b
 	github.com/Implex-ltd/fingerprint-client v0.0.0-20230830235428-380e1bbcfa4b
-	github.com/Implex-ltd/ucdiscord v0.0.0-20230921230022-0f5e660a8eb5
+	github.com/Implex-ltd/ucdiscord v0.0.0-20231005084519-cc43983e327e
 	github.com/zenthangplus/goccm v1.1.3
 )
 
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
+	github.com/Implex-ltd/GoCycle v0.0.0-20230828194937-e5211bbf5f28 // indirect
 	github.com/Implex-ltd/bridge v0.0.0-20230925122013-03842a3055b7 // indirect
+	github.com/Implex-ltd/crapsolver v0.0.0-20231007071611-359b231d8acb // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/bogdanfinn/fhttp v0.5.24 // indirect
 	github.com/bogdanfinn/tls-client v1.6.1 // indirect

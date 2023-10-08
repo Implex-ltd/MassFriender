@@ -9,10 +9,11 @@ type Cfg struct {
 		MaxDm     int  `toml:"max_dm"`
 	} `toml:"config"`
 	Discord struct {
-		Build int `toml:"build"`
+		Build        int  `toml:"build"`
+		SolveCaptcha bool `toml:"solve_captcha"`
 	} `toml:"discord"`
 	Bridge struct {
-		Enable  bool   `toml:"enable"`
-		Port    int    `toml:"port"`
+		Enable bool `toml:"enable"`
+		Port   int  `toml:"port"`
 	} `toml:"bridge"`
 }
