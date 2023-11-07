@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	Crap = crapsolver.NewSolver()
+	Crap, _ = crapsolver.NewSolver("user:ggxl9uip42bnq0tgs4ch")
 )
 
 func NewInstance(config *Config) (*Instance, error) {
@@ -38,46 +38,14 @@ func (I *Instance) PushTask(usernames []string) {
 }
 
 func (I *Instance) Do(task string) int {
-	var err error
-
-	spawned := false
-	capKey := ""
-	rqdata := ""
-	rqtoken := ""
-
 	for {
-		if spawned {
-			capKey, err = Crap.SolveUntil(&crapsolver.TaskConfig{
-				UserAgent: I.Config.Client.Ws.Prop.BrowserUserAgent,
-				Proxy:     I.Config.Client.Config.Http.Config.Proxy,
-				SiteKey:   "a9b5fb07-92ff-493f-86fe-352a2803b3df",
-				Domain:    "discord.com",
-				A11YTfe:   true,
-				Turbo:     true,
-				TurboSt:   3300,
-				TaskType:  crapsolver.TASKTYPE_ENTERPRISE,
-				Rqdata:    rqdata,
-			}, 4)
-			if err != nil {
-				continue
-			}
-		}
-
 		resp, data, err := I.Config.Client.AddFriend(&ucdiscord.Config{
-			Username:   task,
-			CaptchaKey: capKey,
-			RqToken:    rqtoken,
+			Username: task,
 		})
 
 		if err != nil {
 			return STATUS_NIL
 		}
-
-		//og.Println(spawned, resp.Status, data)
-
-		spawned = false
-		rqdata = ""
-		rqtoken = ""
 
 		switch resp.Status {
 		case 204:
@@ -93,13 +61,12 @@ func (I *Instance) Do(task string) int {
 			return STATUS_RATELIMIT
 		case 400:
 			if I.Config.EnableSolver {
-				spawned = true
-				rqdata = data.CaptchaRqdata
-				rqtoken = data.CaptchaRqtoken
 				continue
 			}
 
-			I.Cache.Report.Captcha = true
+			if data.CaptchaService != "" {
+				I.Cache.Report.Captcha = true
+			}
 			return STATUS_NIL
 
 		default:

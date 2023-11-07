@@ -20,17 +20,14 @@ var (
 	fp *fpclient.Fingerprint
 )
 
-func GatherTasklist(length int) []string {
-	out := make([]string, 0)
-
-	for i := 0; i < length; i++ {
+func GatherTasklist(length int) (out []string) {
+	for len(out) != length {
 		username, err := Inputs["username"].Next()
 		if err != nil {
-			break
+			continue
 		}
 
 		if Inputs["done"].IsInList(username) || Inputs["blacklist"].IsInList(username) {
-			i--
 			continue
 		}
 
@@ -109,6 +106,7 @@ func ThreadWorker(token string) error {
 
 		Tasklist := GatherTasklist(I.Config.MaxTask - I.Cache.Report.Success)
 		if len(Tasklist) == 0 {
+			log.Println("tasklist empty")
 			break
 		}
 
@@ -144,9 +142,11 @@ func ThreadWorker(token string) error {
 		I.Cache.Taskout = instance.Taskout{}
 	}
 
-	/*if !I.Cache.Report.Captcha && !I.Cache.Report.Ratelimited {
-		go utils.AppendLineInDirectory("../../assets/data", "dead.txt", token)
-	}*/
+	/*
+		if !I.Cache.Report.Captcha && !I.Cache.Report.Ratelimited {
+			go utils.AppendLineInDirectory("../../assets/data", "dead.txt", token)
+		}
+	*/
 
 	defer client.Ws.Close()
 

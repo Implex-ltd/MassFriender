@@ -1,10 +1,10 @@
 [config]
 clear_dups = false
-threads = 300
-max_dm = 20
+threads = 500
+max_dm = 13
 
 [discord]
-build = 230656
+build = 243588
 solve_captcha = false
 
 [bridge]

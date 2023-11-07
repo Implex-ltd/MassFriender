@@ -41,7 +41,7 @@ func LoadDir(inputDir string) error {
 				if Config.Config.ClearDups {
 					c.ClearDuplicates()
 				}
-				
+
 				c.RandomiseIndex()
 
 				assetName := strings.Split(file.Name(), ".txt")[0]
